@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlyHigh · Flight Ticket Booking</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at 20% 30%, #0a0e1a, #03050b);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+        }
+
+        .booking-container {
+            max-width: 1100px;
+            width: 100%;
+            background: rgba(12, 17, 28, 0.9);
+            backdrop-filter: blur(15px);
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(100, 180, 255, 0.15);
+            padding: 2rem 2rem 2rem 2rem;
+            border: 1px solid rgba(80, 160, 255, 0.2);
+            transition: 0.3s;
+        }
+
+        h1 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #e2e9ff;
+            font-weight: 600;
+            font-size: 2rem;
+            letter-spacing: 1px;
+            margin-bottom: 0.25rem;
+            border-bottom: 1px solid rgba(80, 160, 255, 0.3);
+            padding-bottom: 1rem;
+        }
+
+        h1 i {
+            color: #4a9eff;
+            font-size: 2.2rem;
+            text-shadow: 0 0 20px #4a9effcc;
+        }
+
+        .subhead {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            color: #9bb5e0;
+        }
+
+        .trip-badge {
+            display: flex;
+            gap: 0.5rem;
+            background: #101826;
+            padding: 0.3rem 0.8rem;
+            border-radius: 40px;
+            border: 1px solid #2b3f60;
+            font-size: 0.85rem;
+        }
+
+        .trip-badge span {
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            cursor: default;
+        }
+
+        .trip-badge .active {
+            background: #1e3a6b;
+            color: #b8d4ff;
+            font-weight: 600;
+        }
+
+        .search-panel {
+            background: #0a121f;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #1e2c42;
+            box-shadow: inset 0 1px 3px #00000055;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.2rem;
+            align-items: end;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-group label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #6e86b0;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+
+        .input-group input, .input-group select {
+            background: #111b2b;
+            border: 1px solid #273a57;
+            border-radius: 14px;
+            padding: 0.85rem 1rem;
+            color: #ecf3ff;
+            font-size: 0.95rem;
+            font-weight: 500;
+            outline: none;
+            transition: 0.2s;
+            width: 100%;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            border-color: #4a9eff;
+            box-shadow: 0 0 0 3px #4a9eff33;
+        }
+
+        .input-group input::placeholder {
+            color: #5b6f8f;
+            font-weight: 400;
+        }
+
+        .search-btn {
+            background: #1e4b8a;
+            border: none;
+            padding: 0.85rem 1.5rem;
+            border-radius: 14px;
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid #3a7bd5;
+            box-shadow: 0 8px 0 #0b1a2e, 0 0 15px #1e4b8a99;
+            letter-spacing: 0.5px;
+            height: 52px;
+            white-space: nowrap;
+        }
+
+        .search-btn:hover {
+            background: #2360a8;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 0 #0b1a2e, 0 0 25px #3a7bd5cc;
+        }
+
+        .search-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 4px 0 #0b1a2e;
+        }
+
+        .flights-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            color: #b8c9e8;
+        }
+
+        .flights-header h2 {
+            font-size: 1.3rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .flights-header h2 i {
+            color: #4a9eff;
+        }
+
+        .flight-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.8rem;
+            max-height: 380px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .flight-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .flight-list::-webkit-scrollbar-track {
+            background: #0f1725;
+            border-radius: 10px;
+        }
+
+        .flight-list::-webkit-scrollbar-thumb {
+            background: #2f4a70;
+            border-radius: 10px;
+        }
+
+        .flight-card {
+            background: #0d1624;
+            border-radius: 1.5rem;
+            padding: 1.4rem 1.6rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.2rem;
+            border: 1px solid #1f314b;
+            transition: 0.2s;
+            cursor: pointer;
+            box-shadow: 0 5px 10px #00000033;
+        }
+
+        .flight-card:hover {
+            border-color: #2e5a9c;
+            background: #111e30;
+            transform: scale(1.01);
+        }
+
+        .flight-card.selected-flight {
+            border-color: #4a9eff;
+            background: #102236;
+            box-shadow: 0 0 20px #1e4b8a66;
+        }
+
+        .flight-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            flex: 2;
+        }
+
+        .airline {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 150px;
+        }
+
+        .airline i {
+            font-size: 2rem;
+            color: #4a9eff;
+            background: #0d1a2c;
+            padding: 10px;
+            border-radius: 14px;
+            border: 1px solid #24405f;
+        }
+
+        .airline-name {
+            font-weight: 600;
+            color: #d7e5ff;
+            font-size: 1.1rem;
+        }
+
+        .flight-route {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .depart, .arrive {
+            text-align: center;
+        }
+
+        .depart .time, .arrive .time {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 1px;
+        }
+
+        .depart .code, .arrive .code {
+            font-size: 0.8rem;
+            color: #8aa1c9;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .duration {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #6b85ad;
+            padding: 0 10px;
+            position: relative;
+        }
+
+        .duration::before, .duration::after {
+            content: '';
+            display: block;
+            width: 30px;
+            height: 1px;
+            background: #2e4a70;
+            margin: 4px auto;
+        }
+
+        .duration i {
+            font-size: 0.7rem;
+            color: #4a9eff;
+        }
+
+        .price-section {
+            text-align: right;
+            min-width: 140px;
+        }
+
+        .price {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #f0f6ff;
+            letter-spacing: -0.5px;
+        }
+
+        .price small {
+            font-size: 0.9rem;
+            color: #7b93b9;
+            font-weight: 400;
+        }
+
+        .seats-left {
+            font-size: 0.75rem;
+            color: #5d7ba3;
+            background: #111c2d;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        .booking-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            background: #0a121f;
+            border-radius: 60px;
+            padding: 0.9rem 1.8rem 0.9rem 2rem;
+            margin-top: 1rem;
+            border: 1px solid #1e2c42;
+        }
+
+        .selection-summary {
+            display: flex;
+            align-items: center;
+            gap: 2.2rem;
+            flex-wrap: wrap;
+            color: #b8c9e8;
+        }
+
+        .summary-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+
+        .summary-item i {
+            color: #4a9eff;
+            font-size: 1.2rem;
+            width: 1.5rem;
+        }
+
+        .total-price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-left: auto;
+            letter-spacing: -0.5px;
+        }
+
+        .total-price span {
+            font-size: 1rem;
+            color: #7b93b9;
+            font-weight: 400;
+            margin-right: 8px;
+        }
+
+        .book-btn {
+            background: #1e4b8a;
+            border: none;
+            padding: 0.9rem 2.8rem;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid #3a7bd5;
+            box-shadow: 0 8px 0 #0b1a2e, 0 0 20px #1e4b8a99;
+            letter-spacing: 0.5px;
+        }
+
+        .book-btn:hover:not(:disabled) {
+            background: #2360a8;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 0 #0b1a2e, 0 0 30px #3a7bd5;
+        }
+
+        .book-btn:active:not(:disabled) {
+            transform: translateY(4px);
+            box-shadow: 0 4px 0 #0b1a2e;
+        }
+
+        .book-btn:disabled {
+            opacity: 0.35;
+            transform: translateY(4px);
+            box-shadow: 0 4px 0 #0b1a2e;
+            pointer-events: none;
+            background: #2c3e5a;
+            border-color: #3e5270;
+        }
+
+        .notification {
+            margin-top: 1.2rem;
+            text-align: center;
+            color: #b9f5b9;
+            font-weight: 500;
+            min-height: 2rem;
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .notification i {
+            color: #7ae07a;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #5b7297;
+            font-size: 1rem;
+            border: 1px dashed #2a3d5a;
+            border-radius: 1.5rem;
+            background: #0b111c;
+        }
+
+        @media (max-width: 750px) {
+            .booking-container {
+                padding: 1.5rem;
+            }
+            .flight-card {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .flight-info {
+                justify-content: space-between;
+            }
+            .price-section {
+                text-align: left;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .booking-actions {
+                flex-direction: column;
+                align-items: stretch;
+                border-radius: 30px;
+                padding: 1.5rem;
+            }
+            .total-price {
+                margin-left: 0;
+                text-align: center;
+            }
+            .book-btn {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .flight-info {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .flight-route {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .search-panel {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="booking-container">
+        <h1>
+            <i class="fas fa-plane-departure"></i> FlyHigh
+        </h1>
+        <div class="subhead">
+            <div class="trip-badge">
+                <span class="active">One way</span>
+                <span>Round trip</span>
+                <span>Multi-city</span>
+            </div>
+            <div><i class="fas fa-calendar-alt"></i> Today, 12 Oct 2025</div>
+        </div>
+
+        <!-- Search Panel -->
+        <div class="search-panel">
+            <div class="input-group">
+                <label><i class="fas fa-map-marker-alt"></i> From</label>
+                <input type="text" id="fromCity" placeholder="New York (JFK)" value="New York (JFK)">
+            </div>
+            <div class="input-group">
+                <label><i class="fas fa-map-marker-alt"></i> To</label>
+                <input type="text" id="toCity" placeholder="London (LHR)" value="London (LHR)">
+            </div>
+            <div class="input-group">
+                <label><i class="fas fa-calendar"></i> Departure</label>
+                <input type="date" id="departDate" value="2025-10-15">
+            </div>
+            <div class="input-group">
+                <label><i class="fas fa-user"></i> Passengers</label>
+                <select id="passengers">
+                    <option value="1">1 Adult</option>
+                    <option value="2" selected>2 Adults</option>
+                    <option value="3">3 Adults</option>
+                    <option value="4">4 Adults</option>
+                </select>
+            </div>
+            <button class="search-btn" id="searchBtn"><i class="fas fa-search"></i> Search flights</button>
+        </div>
+
+        <!-- Flight List Header -->
+        <div class="flights-header">
+            <h2><i class="fas fa-plane"></i> Available flights</h2>
+            <span id="resultsCount" style="font-size:0.9rem; color:#6e86b0;">3 flights found</span>
+        </div>
+
+        <!-- Flight List (populated by JS) -->
+        <div class="flight-list" id="flightList"></div>
+
+        <!-- Booking Summary -->
+        <div class="booking-actions">
+            <div class="selection-summary">
+                <div class="summary-item">
+                    <i class="fas fa-ticket-alt"></i> <span id="selectedFlightLabel">No flight selected</span>
+                </div>
+                <div class="summary-item">
+                    <i class="fas fa-user-friends"></i> <span id="passengerCount">2</span> passengers
+                </div>
+            </div>
+            <div class="total-price">
+                <span>Total</span> $<span id="totalPrice">0</span>
+            </div>
+            <button class="book-btn" id="bookButton" disabled>
+                <i class="fas fa-check-circle"></i> Confirm booking
+            </button>
+        </div>
+        <div class="notification" id="notification"></div>
+    </div>
+
+    <script>
+        (function() {
+            // ---------- Data ----------
+            const flightsData = [
+                {
+                    id: 'FL001',
+                    airline: 'Delta Airlines',
+                    icon: 'fa-plane',
+                    from: 'JFK',
+                    to: 'LHR',
+                    departTime: '08:30',
+                    arriveTime: '20:45',
+                    duration: '7h 15m',
+                    price: 489,
+                    seatsLeft: 9,
+                    fromCity: 'New York',
+                    toCity: 'London'
+                },
+                {
+                    id: 'FL002',
+                    airline: 'British Airways',
+                    icon: 'fa-plane',
+                    from: 'JFK',
+                    to: 'LHR',
+                    departTime: '11:15',
+                    arriveTime: '23:30',
+                    duration: '7h 15m',
+                    price: 542,
+                    seatsLeft: 4,
+                    fromCity: 'New York',
+                    toCity: 'London'
+                },
+                {
+                    id: 'FL003',
+                    airline: 'Virgin Atlantic',
+                    icon: 'fa-plane',
+                    from: 'JFK',
+                    to: 'LHR',
+                    departTime: '18:20',
+                    arriveTime: '06:35+1',
+                    duration: '7h 15m',
+                    price: 610,
+                    seatsLeft: 12,
+                    fromCity: 'New York',
+                    toCity: 'London'
+                },
+                {
+                    id: 'FL004',
+                    airline: 'American Airlines',
+                    icon: 'fa-plane',
+                    from: 'JFK',
+                    to: 'LHR',
+                    departTime: '21:50',
+                    arriveTime: '10:05+1',
+                    duration: '7h 15m',
+                    price: 458,
+                    seatsLeft: 7,
+                    fromCity: 'New York',
+                    toCity: 'London'
+                }
+            ];
+
+            // ---------- State ----------
+            let selectedFlightId = null;
+            let passengerCount = 2;   // default matching the select
+            let currentFlights = [...flightsData]; // can be filtered later
+
+            // ---------- DOM refs ----------
+            const flightListEl = document.getElementById('flightList');
+            const resultsCountEl = document.getElementById('resultsCount');
+            const selectedFlightLabel = document.getElementById('selectedFlightLabel');
+            const passengerCountEl = document.getElementById('passengerCount');
+            const totalPriceEl = document.getElementById('totalPrice');
+            const bookButton = document.getElementById('bookButton');
+            const notificationEl = document.getElementById('notification');
+            const fromCityInput = document.getElementById('fromCity');
+            const toCityInput = document.getElementById('toCity');
+            const departDateInput = document.getElementById('departDate');
+            const passengersSelect = document.getElementById('passengers');
+            const searchBtn = document.getElementById('searchBtn');
+
+            // ---------- Helper: format currency ----------
+            const formatPrice = (value) => value.toFixed(0);
+
+            // ---------- Render flight list ----------
+            function renderFlights(flights) {
+                if (!flights || flights.length === 0) {
+                    flightListEl.innerHTML = `<div class="empty-state"><i class="fas fa-plane-slash" style="font-size:2rem; margin-bottom:1rem; display:block;"></i>No flights match your search.</div>`;
+                    resultsCountEl.textContent = '0 flights found';
+                    return;
+                }
+
+                resultsCountEl.textContent = `${flights.length} flight${flights.length > 1 ? 's' : ''} found`;
+                let html = '';
+                flights.forEach(flight => {
+                    const isSelected = selectedFlightId === flight.id;
+                    const selectedClass = isSelected ? 'selected-flight' : '';
+                    html += `
+                        <div class="flight-card ${selectedClass}" data-flight-id="${flight.id}">
+                            <div class="flight-info">
+                                <div class="airline">
+                                    <i class="fas ${flight.icon}"></i>
+                                    <span class="airline-name">${flight.airline}</span>
+                                </div>
+                                <div class="flight-route">
+                                    <div class="depart">
+                                        <div class="time">${flight.departTime}</div>
+                                        <div class="code">${flight.from}</div>
+                                    </div>
+                                    <div class="duration">
+                                        <i class="fas fa-arrow-right"></i>
+                                        <div>${flight.duration}</div>
+                                    </div>
+                                    <div class="arrive">
+                                        <div class="time">${flight.arriveTime}</div>
+                                        <div class="code">${flight.to}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="price-section">
+                                <div class="price">$${formatPrice(flight.price)} <small>USD</small></div>
+                                <div class="seats-left"><i class="fas fa-chair"></i> ${flight.seatsLeft} seats left</div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                flightListEl.innerHTML = html;
+
+                // Attach click listeners to each flight card
+                document.querySelectorAll('.flight-card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        const flightId = card.dataset.flightId;
+                        // Remove selected class from all
+                        document.querySelectorAll('.flight-card').forEach(c => c.classList.remove('selected-flight'));
+                        // Add to clicked
+                        card.classList.add('selected-flight');
+                        // Update state
+                        selectedFlightId = flightId;
+                        const selectedFlight = currentFlights.find(f => f.id === flightId);
+                        if (selectedFlight) {
+                            selectedFlightLabel.textContent = `${selectedFlight.airline} · ${selectedFlight.from} → ${selectedFlight.to}`;
+                        }
+                        updateTotalAndButton();
+                    });
+                });
+            }
+
+            // ---------- Update total price and book button ----------
+            function updateTotalAndButton() {
+                // Update passenger count display
+                passengerCount = parseInt(passengersSelect.value, 10);
+                passengerCountEl.textContent = passengerCount;
+
+                if (selectedFlightId) {
+                    const flight = currentFlights.find(f => f.id === selectedFlightId);
+                    if (flight) {
+                        const total = flight.price * passengerCount;
+                        totalPriceEl.textContent = formatPrice(total);
+                        bookButton.disabled = false;
+                    } else {
+                        totalPriceEl.textContent = '0';
+                        bookButton.disabled = true;
+                    }
+                } else {
+                    totalPriceEl.textContent = '0';
+                    bookButton.disabled = true;
+                }
+            }
+
+            // ---------- Reset selection (used after booking) ----------
+            function resetSelection() {
+                selectedFlightId = null;
+                selectedFlightLabel.textContent = 'No flight selected';
+                // Remove highlight from all cards
+                document.querySelectorAll('.flight-card').forEach(c => c.classList.remove('selected-flight'));
+                updateTotalAndButton();
+            }
+
+            // ---------- Book handler ----------
+            function handleBook() {
+                if (!selectedFlightId) return;
+                const flight = currentFlights.find(f => f.id === selectedFlightId);
+                if (!flight) return;
+
+                const total = flight.price * passengerCount;
+                const seatInfo = `Flight ${flight.airline} (${flight.from} → ${flight.to}) · ${passengerCount} passenger${passengerCount > 1 ? 's' : ''} · $${formatPrice(total)}`;
+
+                // Show success notification
+                notificationEl.innerHTML = `<i class="fas fa-check-circle"></i> Booking confirmed! ${seatInfo}`;
+
+                // Disable button to avoid double booking
+                bookButton.disabled = true;
+
+                // Simulate that flight is now booked (reduce seats, maybe mark unavailable)
+                // For simplicity, we reduce seatsLeft and show visual feedback
+                const flightIndex = currentFlights.findIndex(f => f.id === selectedFlightId);
+                if (flightIndex !== -1) {
+                    // Reduce seats
+                    currentFlights[flightIndex].seatsLeft = Math.max(0, currentFlights[flightIndex].seatsLeft - passengerCount);
+                    // If seats run out, we could remove, but we keep it simple: re-render
+                }
+
+                // Clear selection after a short delay and re-render
+                setTimeout(() => {
+                    resetSelection();
+                    // Re-render with updated seat counts (no selection)
+                    renderFlights(currentFlights);
+                    // Clear notification after a while
+                    setTimeout(() => {
+                        notificationEl.innerHTML = '';
+                    }, 4000);
+                }, 200);
+            }
+
+            // ---------- Filter flights based on search inputs (simple simulation) ----------
+            function applyFilters() {
+                const fromText = fromCityInput.value.trim().toLowerCase();
+                const toText = toCityInput.value.trim().toLowerCase();
+                const date = departDateInput.value;
+
+                // For simplicity, we ignore date filtering (static demo), but we filter by city names/codes
+                // Since our flights are all JFK->LHR, we can do a basic filter on from/to matching city or code
+                let filtered = flightsData.filter(flight => {
+                    const matchFrom = flight.from.toLowerCase().includes(fromText) || 
+                                      flight.fromCity.toLowerCase().includes(fromText) ||
+                                      fromText === '' || fromText === 'new york (jfk)' || fromText === 'jfk';
+                    const matchTo = flight.to.toLowerCase().includes(toText) || 
+                                    flight.toCity.toLowerCase().includes(toText) ||
+                                    toText === '' || toText === 'london (lhr)' || toText === 'lhr';
+                    return matchFrom && matchTo;
+                });
+
+                // If no exact match, maybe show all? But we'll keep it as is.
+                // Also ensure we have at least all flights if filters are default
+                if (filtered.length === 0 && fromText.includes('new york') && toText.includes('london')) {
+                    // fallback to all flights (since our data is all NY->London)
+                    filtered = [...flightsData];
+                }
+                // If filtered empty, we can also just show original if inputs match default
+                if (filtered.length === 0) {
+                    // check if inputs are the default
+                    const defaultFrom = 'New York (JFK)';
+                    const defaultTo = 'London (LHR)';
+                    if (fromCityInput.value === defaultFrom && toCityInput.value === defaultTo) {
+                        filtered = [...flightsData];
+                    }
+                }
+
+                currentFlights = filtered;
+                // Reset selection because flights changed
+                resetSelection();
+                renderFlights(currentFlights);
+            }
+
+            // ---------- Initialization ----------
+            function init() {
+                // Set initial passenger count from select
+                passengerCount = parseInt(passengersSelect.value, 10);
+                passengerCountEl.textContent = passengerCount;
+
+                // Render initial flights (all)
+                currentFlights = [...flightsData];
+                renderFlights(currentFlights);
+
+                // Ensure total is 0 initially (no flight selected)
+                totalPriceEl.textContent = '0';
+                bookButton.disabled = true;
+
+                // Event: passenger count change
+                passengersSelect.addEventListener('change', (e) => {
+                    passengerCount = parseInt(e.target.value, 10);
+                    passengerCountEl.textContent = passengerCount;
+                    updateTotalAndButton();
+                });
+
+                // Event: book button
+                bookButton.addEventListener('click', handleBook);
+
+                // Event: search button
+                searchBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    applyFilters();
+                });
+
+                // Optional: search on Enter key in inputs
+                [fromCityInput, toCityInput, departDateInput].forEach(input => {
+                    input.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            applyFilters();
+                        }
+                    });
+                });
+
+                // Initialize any tooltips etc.
+            }
+
+            // Start the app
+            init();
+        })();
+    </script>
+</body>
+</html>

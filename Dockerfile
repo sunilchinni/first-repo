@@ -1,5 +1,5 @@
-FROM nginx
+FROM httpd
 EXPOSE 80
 MAINTAINER Sunil
-LABEL This is Movie ticket booking application
-COPY index.html /usr/share/nginx/html
+LABEL This is flight ticket booking application
+COPY flight.html /usr/local/apache2/htdocs/

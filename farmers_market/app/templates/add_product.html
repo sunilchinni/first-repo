@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Add Product - Farmers Market{% endblock %}
+
+{% block content %}
+<h1>Add Your Product</h1>
+<p class="subtitle">Farmers: list your fresh produce for sale</p>
+
+<form method="POST" action="{{ url_for('add_product') }}" class="form-card">
+    <h3>Farmer Information</h3>
+
+    <div class="form-row">
+        <label for="farmer_name">Your Name *</label>
+        <input type="text" id="farmer_name" name="farmer_name"
+               value="{{ request.form.get('farmer_name', '') }}" required>
+    </div>
+
+    <div class="form-row">
+        <label for="farmer_email">Email *</label>
+        <input type="email" id="farmer_email" name="farmer_email"
+               value="{{ request.form.get('farmer_email', '') }}" required>
+    </div>
+
+    <div class="form-row">
+        <label for="farmer_phone">Phone</label>
+        <input type="text" id="farmer_phone" name="farmer_phone"
+               value="{{ request.form.get('farmer_phone', '') }}">
+    </div>
+
+    <div class="form-row">
+        <label for="farm_location">Farm Location</label>
+        <input type="text" id="farm_location" name="farm_location"
+               value="{{ request.form.get('farm_location', '') }}">
+    </div>
+
+    <h3>Product Information</h3>
+
+    <div class="form-row">
+        <label for="product_name">Product Name *</label>
+        <input type="text" id="product_name" name="product_name"
+               value="{{ request.form.get('product_name', '') }}" required>
+    </div>
+
+    <div class="form-row">
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="3">{{ request.form.get('description', '') }}</textarea>
+    </div>
+
+    <div class="form-row">
+        <label for="category">Category</label>
+        <select id="category" name="category">
+            {% set cats = ['Vegetables','Fruits','Dairy & Eggs','Grains','Honey','Meat','Other'] %}
+            {% set selected_cat = request.form.get('category', 'Vegetables') %}
+            {% for c in cats %}
+                <option value="{{ c }}" {% if c == selected_cat %}selected{% endif %}>{{ c }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-row">
+        <label for="price">Price ($) *</label>
+        <input type="number" id="price" name="price" step="0.01" min="0.01"
+               value="{{ request.form.get('price', '') }}" required>
+    </div>
+
+    <div class="form-row">
+        <label for="quantity">Quantity *</label>
+        <input type="number" id="quantity" name="quantity" min="1"
+               value="{{ request.form.get('quantity', '') }}" required>
+    </div>
+
+    <div class="form-row">
+        <label for="unit">Unit</label>
+        <select id="unit" name="unit">
+            {% set units = ['kg','dozen','box','jar','piece','liter'] %}
+            {% set selected_unit = request.form.get('unit', 'kg') %}
+            {% for u in units %}
+                <option value="{{ u }}" {% if u == selected_unit %}selected{% endif %}>{{ u }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add Product</button>
+</form>
+{% endblock %}

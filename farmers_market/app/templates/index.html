@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Shop - Farmers Market{% endblock %}
+{% block content %}
+<h1>Fresh Products from Local Farmers</h1>
+
+<div class="products-grid">
+    {% for product in products %}
+    <div class="product-card">
+        <div class="product-category">{{ product.category }}</div>
+        <h3>{{ product.name }}</h3>
+        <p class="description">{{ product.description }}</p>
+        <p class="farmer">👨‍🌾 {{ product.farmer_name }} — {{ product.farm_location }}</p>
+        <p class="price">${{ "%.2f"|format(product.price) }} / {{ product.unit }}</p>
+        <p class="stock">In stock: {{ product.quantity }}</p>
+        <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST">
+            <input type="number" name="quantity" value="1" min="1" max="{{ product.quantity }}" required>
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
+        </form>
+    </div>
+    {% else %}
+    <p>No products available yet. Be the first to <a href="{{ url_for('add_product') }}">add one</a>!</p>
+    {% endfor %}
+</div>
+{% endblock %}

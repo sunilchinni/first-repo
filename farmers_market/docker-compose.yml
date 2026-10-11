@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  db:
+    build: ./database
+    container_name: farmer_market_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: Admin@123
+      MYSQL_DATABASE: farmer_market
+      MYSQL_USER: farmer_user
+      MYSQL_PASSWORD: farmer_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - farmer_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build: ./app
+    container_name: farmer_market_web
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: farmer_user
+      DB_PASSWORD: farmer_pass
+      DB_NAME: farmer_market
+      SECRET_KEY: a9f3b8d2c7e14560f1a2c4d9e8b7f603a1c5d9e2f4b6a8c0d3e7f1a5b9c2d6e4
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - farmer_network
+
+volumes:
+  db_data:
+
+networks:
+  farmer_network:
+    driver: bridge

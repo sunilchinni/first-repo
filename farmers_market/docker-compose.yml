@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   db:
-    build: ./database
+    image: farmer-app:db
     container_name: farmer_market_db
     restart: unless-stopped
     environment:
@@ -23,7 +23,7 @@ services:
       retries: 10
 
   web:
-    build: ./app
+    image: farmer-app:python
     container_name: farmer_market_web
     restart: unless-stopped
     ports:

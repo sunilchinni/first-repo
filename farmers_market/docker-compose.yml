@@ -36,8 +36,7 @@ services:
       DB_NAME: farmer_market
       SECRET_KEY: a9f3b8d2c7e14560f1a2c4d9e8b7f603a1c5d9e2f4b6a8c0d3e7f1a5b9c2d6e4
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     networks:
       - farmer_network
 

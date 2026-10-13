@@ -1,4 +1,4 @@
-FROM sunilchinni/farmer-app:python
+FROM sunilchinni/ksreddy:farmer
 
 WORKDIR /app
 

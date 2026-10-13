@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM sunilchinni/farmer-app:python
 
 WORKDIR /app
 

@@ -1,4 +1,4 @@
-FROM sunilchinni/farmer-app:db
+FROM sunilchinni/ksreddy:v1
 
 # Set environment variables
 ENV MYSQL_ROOT_PASSWORD=Admin@123
